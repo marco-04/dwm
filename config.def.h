@@ -91,6 +91,12 @@ static const Layout layouts[] = {
 	{ NULL,       NULL },
 };
 
+static const MonitorRule monrules[] = {
+	/* monitor  tag  layout  mfact  nmaster  showbar  topbar */
+	//{  1,       -1,  2,      -1,    -1,      -1,      -1     }, // use a different layout for the second monitor
+	{  -1,      -1,  0,      -1,    -1,      -1,      -1     } // default (keep it last)
+};
+
 /* key definitions */
 #define MODKEY Mod1Mask
 #define TAGKEYS(KEY,TAG) \
