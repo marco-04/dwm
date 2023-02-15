@@ -61,8 +61,6 @@
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
 #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
 
-#define BARPADDING_PATCH 	    1
-
 #define OPAQUE                  0xffU
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
@@ -3374,21 +3372,15 @@ togglebar(const Arg *arg)
 		selmon->pertag->showbars[0] = selmon->showbar;
 	}
 	updatebarpos(selmon);
-	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
+	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx + sp, selmon->by + vp, selmon->ww - 2 * sp, bh);
 	if (showsystray) {
 		XWindowChanges wc;
 		if (!selmon->showbar)
 			wc.y = -bh;
 		else if (selmon->showbar) {
-			#if BARPADDING_PATCH
 			wc.y = vp;
 			if (!selmon->topbar)
 				wc.y = selmon->mh - bh + vp;
-			#else
-			wc.y = 0;
-			if (!selmon->topbar)
-				wc.y = selmon->mh - bh;
-			#endif // BARPADDING_PATCH
 		}
 		XConfigureWindow(dpy, systray->win, CWY, &wc);
 	}
@@ -3788,10 +3780,8 @@ updatesystray(int updatebar)
 	Monitor *m = systraytomon(NULL);
 	unsigned int x = m->mx + m->mw;
 	unsigned int w = 1, xpad = 0, ypad = 0;
-	#if BARPADDING_PATCH
 	xpad = sp;
 	ypad = vp;
-	#endif // BARPADDING_PATCH
 
 	if (!showsystray)
 		return;
