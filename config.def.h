@@ -108,11 +108,11 @@ static const MonitorRule monrules[] = {
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(CHAIN,KEY,TAG) \
 	{ MODKEY,                       CHAIN,    KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           CHAIN,    KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             CHAIN,    KEY,      tag,            {.ui = 1 << TAG} }, \
+	{ MODKEY|ShiftMask,             CHAIN,    KEY,      combotag,       {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, CHAIN,    KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
@@ -168,22 +168,22 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             -1,       XK_l,      setcfact,       {.f = -0.25} },
 	{ MODKEY|ShiftMask,             -1,       XK_o,      setcfact,       {.f =  0.00} },
 	{ MODKEY,                       -1,       XK_Return, zoom,           {0} },
-	{ MODKEY|Mod4Mask,              -1,       XK_u,      incrgaps,       {.i = +1 } },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_u,      incrgaps,       {.i = -1 } },
-	{ MODKEY|Mod4Mask,              -1,       XK_i,      incrigaps,      {.i = +1 } },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_i,      incrigaps,      {.i = -1 } },
-	{ MODKEY|Mod4Mask,              -1,       XK_o,      incrogaps,      {.i = +1 } },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_o,      incrogaps,      {.i = -1 } },
-	{ MODKEY|Mod4Mask,              -1,       XK_6,      incrihgaps,     {.i = +1 } },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_6,      incrihgaps,     {.i = -1 } },
-	{ MODKEY|Mod4Mask,              -1,       XK_7,      incrivgaps,     {.i = +1 } },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_7,      incrivgaps,     {.i = -1 } },
-	{ MODKEY|Mod4Mask,              -1,       XK_8,      incrohgaps,     {.i = +1 } },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_8,      incrohgaps,     {.i = -1 } },
-	{ MODKEY|Mod4Mask,              -1,       XK_9,      incrovgaps,     {.i = +1 } },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_9,      incrovgaps,     {.i = -1 } },
-	{ MODKEY|Mod4Mask,              -1,       XK_0,      togglegaps,     {0} },
-	{ MODKEY|Mod4Mask|ShiftMask,    -1,       XK_0,      defaultgaps,    {0} },
+	{ MODKEY|Mod1Mask,              -1,       XK_u,      incrgaps,       {.i = +1 } },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_u,      incrgaps,       {.i = -1 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_i,      incrigaps,      {.i = +1 } },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_i,      incrigaps,      {.i = -1 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_o,      incrogaps,      {.i = +1 } },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_o,      incrogaps,      {.i = -1 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_6,      incrihgaps,     {.i = +1 } },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_6,      incrihgaps,     {.i = -1 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_7,      incrivgaps,     {.i = +1 } },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_7,      incrivgaps,     {.i = -1 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_8,      incrohgaps,     {.i = +1 } },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_8,      incrohgaps,     {.i = -1 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_9,      incrovgaps,     {.i = +1 } },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_9,      incrovgaps,     {.i = -1 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_0,      togglegaps,     {0} },
+	{ MODKEY|Mod1Mask|ShiftMask,    -1,       XK_0,      defaultgaps,    {0} },
 	{ MODKEY,                       -1,       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             -1,       XK_c,      killclient,     {0} },
 	{ MODKEY,                       -1,       XK_t,      setlayout,      {.v = &layouts[0]} },
