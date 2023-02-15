@@ -2109,7 +2109,7 @@ propertynotify(XEvent *e)
 	}
 
 	if ((ev->window == root) && (ev->atom == XA_WM_NAME)) {
-		if (!fake_signal() && fakesignal())
+		if (!fake_signal() && !fakesignal())
 			updatestatus();
   } else if (ev->state == PropertyDelete)
 		return; /* ignore */
