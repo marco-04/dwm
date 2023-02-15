@@ -2,6 +2,9 @@
 
 #define SESSION_FILE "/tmp/dwm-session"
 
+#define ICONSIZE (bh - 4)   /* icon size */
+#define ICONSPACING 5 /* space between icon and title */
+
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
