@@ -217,8 +217,9 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             -1,       XK_e,      exitdwm,        {0} },
 	{ MODKEY|ControlMask|ShiftMask, -1,       XK_q,      quit,           {1} }, 
 	{ MODKEY,                       -1,       XK_u,      focusurgent,    {0} },
-	{ MODKEY,                       XK_a,     XK_d,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_a,     XK_t,      spawn,          {.v = termcmd } },
+	{ MODKEY,                       -1,       XK_minus,  scratchpad_show, {0} },
+	{ MODKEY|ShiftMask,             -1,       XK_minus,  scratchpad_hide, {0} },
+	{ MODKEY|ControlMask,           -1,       XK_minus,  scratchpad_remove,{0} },
 };
 
 /* button definitions */
