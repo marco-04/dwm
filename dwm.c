@@ -1276,7 +1276,7 @@ drawbar(Monitor *m)
 		//tw = TEXTW(stext) - lrpad + 2; // 2px right padding
 		//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
 		//drw_text(drw, m->ww - tw - stw, 0, tw, bh, 0, stext, 0);
-		tw = statusw = m->ww - drawstatusbar(m, bh, stext);
+		tw = statusw = m->ww - drawstatusbar(m, bh, stext) - 2;
 	}
 
 	for (c = m->clients; c; c = c->next) {

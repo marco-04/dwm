@@ -220,8 +220,8 @@ static const MonitorRule monrules[] = {
 #define MODKEY Mod4Mask
 #define TAGKEYS(CHAIN,KEY,TAG) \
 	{ MODKEY,                       CHAIN,    KEY,      view,           {.ui = 1 << TAG} }, \
+	{ MODKEY|Mod1Mask,              CHAIN,    KEY,      combotag,       {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           CHAIN,    KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             CHAIN,    KEY,      combotag,       {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, CHAIN,    KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
@@ -230,27 +230,40 @@ static const MonitorRule monrules[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
-static const char *applaunchercmd[] = { "mcdmsc-applauncher", NULL };
 static const char *termcmd[]  = { "tabbed_st", NULL };
+static const char *filemanager[]  = { "thunar", NULL };
+static const char *browser[]  = { "firefox", NULL };
 static const char *layoutmenu_cmd = "layoutmenu.sh";
+
+static const char *applaunchercmd[] = { "mcdmsc-applauncher", NULL };
+static const char *powermenu[] = { "mcdmsc-powermenu", NULL };
+
+static const char *volume[]  = { "mcdmsc-volume", NULL };
+static const char *togglemute[]  = { "mcdmsc-volume", "tg", NULL };
+static const char *volup[]  = { "mcdmsc-volume", "up", "5", NULL };
+static const char *volminup[]  = { "mcdmsc-volume", "up", "1", NULL };
+static const char *voldown[]  = { "mcdmsc-volume", "down", "5", NULL };
+static const char *volmindown[]  = { "mcdmsc-volume", "down", "1", NULL };
+
+static const char *lumup[]  = { "brightness.sh", "up", "5", NULL };
+static const char *luminup[]  = { "brightness.sh", "up", "1", NULL };
+static const char *lumdown[]  = { "brightness.sh", "down", "5", NULL };
+static const char *lumindown[]  = { "brightness.sh", "down", "1", NULL };
 
 /* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
 static const StatusCmd statuscmds[] = {
 	{ "notify-send Mouse$BUTTON", 1 },
 };
 static const char *statuscmd[] = { "/bin/sh", "-c", NULL, NULL };
-#include "exitdwm.c"
 
 static Key keys[] = {
 	/* modifier                     chain key key        function        argument */
   // Layouts
 	{ MODKEY,                       -1,       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       -1,       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       -1,       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ControlMask,		        -1,       XK_comma,  cyclelayout,    {.i = -1 } },
+	{ MODKEY,                       -1,       XK_f,      setlayout,      {.v = &layouts[9]} },
 	{ MODKEY|ControlMask,           -1,       XK_period, cyclelayout,    {.i = +1 } },
-	{ MODKEY,                       -1,       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             -1,       XK_space,  togglefloating, {0} },
+	{ MODKEY|ControlMask,		        -1,       XK_comma,  cyclelayout,    {.i = -1 } },
   // mfact
 	{ MODKEY,                       -1,       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       -1,       XK_l,      setmfact,       {.f = +0.05} },
@@ -282,36 +295,59 @@ static Key keys[] = {
 	{ MODKEY,                       -1,       XK_b,      togglebar,      {0} },
 
   // Launchers
-	{ MODKEY,                       -1,       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             -1,       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       -1,       XK_space,  spawn,          {.v = applaunchercmd } },
+	{ MODKEY|ControlMask,           -1,       XK_space,  spawn,          {.v = dmenucmd } },
+	{ MODKEY|ControlMask,           -1,       XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY|ControlMask,           -1,       XK_f,      spawn,          {.v = filemanager } },
+	{ MODKEY|ControlMask,           -1,       XK_b,      spawn,          {.v = browser } },
+  // Volume
+	{ MODKEY,                       XK_v,     XK_v,      spawn,          {.v = volume } },
+	{ MODKEY,                       XK_v,     XK_m,      spawn,          {.v = togglemute } },
+	{ MODKEY|ControlMask,           -1,       XK_Up,     spawn,          {.v = volup } },
+	{ MODKEY|ControlMask,           -1,       XK_Down,   spawn,          {.v = voldown } },
+	{ MODKEY|ShiftMask|ControlMask, -1,       XK_Up,     spawn,          {.v = volminup } },
+	{ MODKEY|ShiftMask|ControlMask, -1,       XK_Down,   spawn,          {.v = volmindown } },
+  // Brightness
+	{ MODKEY|Mod1Mask|ControlMask,  -1,       XK_Up,     spawn,          {.v = lumup } },
+	{ MODKEY|Mod1Mask|ControlMask,  -1,       XK_Down,   spawn,          {.v = lumdown } },
+	{ MODKEY|Mod1Mask|ShiftMask|ControlMask,-1,XK_Up,    spawn,          {.v = luminup } },
+	{ MODKEY|Mod1Mask|ShiftMask|ControlMask,-1,XK_Down,  spawn,          {.v = lumindown } },
+
 
   // Focus
 	{ MODKEY,                       -1,       XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                       -1,       XK_period, focusmon,       {.i = +1 } },
+  { MODKEY,                       -1,       XK_u,      swapclient,     {0} },
 	{ MODKEY|ShiftMask,             -1,       XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             -1,       XK_period, tagmon,         {.i = +1 } },
   { MODKEY|ShiftMask,             -1,       XK_m,      togglemark,     {0} },
   { MODKEY|ShiftMask,             -1,       XK_o,      swapfocus,      {0} },
-  { MODKEY,                       -1,       XK_u,      swapclient,     {0} },
 
   // Windows
 	{ MODKEY,                       -1,       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       -1,       XK_k,      focusstack,     {.i = -1 } },
+	{ MODKEY,                       -1,       XK_Return, zoom,           {0} },
 	{ Mod1Mask,                     -1,       XK_Tab,    altTabStart,    {.i = +1 } },
 	{ Mod1Mask|ShiftMask,           -1,       XK_Tab,    altTabStart,    {.i = -1 } },
-	{ MODKEY|ShiftMask,             -1,       XK_c,      killclient,     {0} },
-	{ MODKEY,                       -1,       XK_Return, zoom,           {0} },
+	{ MODKEY|ControlMask,           -1,       XK_j,      pushdown,       {0} },
+	{ MODKEY|ControlMask,           -1,       XK_k,      pushup,         {0} },
+	{ MODKEY|ControlMask,           -1,       XK_c,      killclient,     {0} },
+	{ MODKEY|Mod1Mask,              -1,       XK_k,      killclient,     {0} },
+	{ MODKEY|ShiftMask,             -1,       XK_space,  togglefloating, {0} },
 
   // Tags
-	{ MODKEY,                       -1,       XK_q,      view,           {0} },
 	{ MODKEY,                       -1,       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY,                       -1,       XK_o,      winview,        {0} },
-	{ MODKEY|ShiftMask,             -1,       XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             -1,       XK_Right,  tagtonext,      {0} },
-	{ MODKEY|ShiftMask,             -1,       XK_Left,   tagtoprev,      {0} },
 	{ MODKEY,                       -1,       XK_Right,  viewnext,       {0} },
 	{ MODKEY,                       -1,       XK_Left,   viewprev,       {0} },
+	{ MODKEY|ControlMask,           -1,       XK_l,      viewnext,       {0} },
+	{ MODKEY|ControlMask,           -1,       XK_h,      viewprev,       {0} },
+	{ MODKEY|ShiftMask,             -1,       XK_0,      tag,            {.ui = ~0 } },
+	{ MODKEY|Mod1Mask,              -1,       XK_Tab,    view,           {0} },
+	{ MODKEY|Mod1Mask,              -1,       XK_Right,  tagtonext,      {0} },
+	{ MODKEY|Mod1Mask,              -1,       XK_Left,   tagtoprev,      {0} },
+	{ MODKEY|ControlMask|Mod1Mask,  -1,       XK_l,      tagtonext,      {0} },
+	{ MODKEY|ControlMask|Mod1Mask,  -1,       XK_h,      tagtoprev,      {0} },
 	TAGKEYS(                        -1,       XK_1,                      0)
 	TAGKEYS(                        -1,       XK_2,                      1)
 	TAGKEYS(                        -1,       XK_3,                      2)
@@ -323,14 +359,14 @@ static Key keys[] = {
 	TAGKEYS(                        -1,       XK_9,                      8)
 
   // Scratchpad
-	{ MODKEY,                       -1,       XK_minus,  scratchpad_show, {0} },
-	{ MODKEY|ShiftMask,             -1,       XK_minus,  scratchpad_hide, {0} },
-	{ MODKEY|ControlMask,           -1,       XK_minus,  scratchpad_remove,{0} },
+	{ MODKEY|XK_s,                  -1,       XK_Tab,    scratchpad_show, {0} },
+	{ MODKEY,                       XK_s,     XK_h,      scratchpad_hide, {0} },
+	{ MODKEY,                       XK_s,     XK_c,      scratchpad_remove,{0} },
 
   // Quit
-	{ MODKEY|ShiftMask,             -1,       XK_q,      quit,           {0} },
-	{ MODKEY|ShiftMask,             -1,       XK_e,      exitdwm,        {0} },
-	{ MODKEY|ControlMask|ShiftMask, -1,       XK_q,      quit,           {1} }, 
+	{ MODKEY,                       XK_q,     XK_q,      spawn,          {.v = powermenu } },
+	{ MODKEY,                       XK_k,     XK_r,      quit,           {1} }, 
+	{ MODKEY,                       XK_k,     XK_e,      quit,           {0} },
 };
 
 /* button definitions */
