@@ -2,6 +2,50 @@
 
 #define SESSION_FILE "/tmp/dwm-session"
 
+/*
+ * APPEARANCE AND BEHAVIOR
+ */
+
+/* --configurable with Xresources-- */
+/* appearance */
+static unsigned int borderpx  = 5;        /* border pixel of windows */
+static unsigned int snap      = 32;       /* snap pixel */
+static int showbar            = 1;        /* 0 means no bar */
+static int topbar             = 1;        /* 0 means bottom bar */
+static int vertpad            = 10;       /* vertical padding of bar */
+static int sidepad            = 10;       /* horizontal padding of bar */
+static int user_bh            = 23;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static char font[]            = "monospace:size=10";
+static char dmenufont[]       = "monospace:size=10";
+static char normbgcolor[]     = "#222222";
+static char normbordercolor[] = "#444444";
+static char normfgcolor[]     = "#bbbbbb";
+static char selfgcolor[]      = "#eeeeee";
+static char selbordercolor[]  = "#005577";
+static char selbgcolor[]      = "#005577";
+static char normmarkcolor[]   = "#775500";	/*border color for marked client*/
+static char selmarkcolor[]    = "#775577";	/*border color for marked client on focus*/
+
+/* tagging */
+static char tagsyms[9][10] = { "", "󱃖", "", "󰎆", "󰊖", "󰍡", "", "", "󰈹" };
+static char tagcolors[9][2][8] = {
+	{ "#ffffff", "#ff0000" },
+	{ "#ffffff", "#ff7f00" },
+	{ "#000000", "#ffff00" },
+	{ "#000000", "#00ff00" },
+	{ "#ffffff", "#0000ff" },
+	{ "#ffffff", "#4b0082" },
+	{ "#ffffff", "#9400d3" },
+	{ "#000000", "#ffffff" },
+	{ "#ffffff", "#000000" },
+};
+
+/* layout(s) */
+static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static int nmaster     = 1;    /* number of clients in master area */
+static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+
+/* --constants-- */
 #define ICONSIZE (bh - 4)   /* icon size */
 #define ICONSPACING 5 /* space between icon and title */
 
@@ -15,92 +59,65 @@ static const unsigned int maxWTab 			= 600;	/* tab menu width */
 static const unsigned int maxHTab 			= 200;	/* tab menu height */
 
 /* appearance */
-static unsigned int borderpx  = 5;        /* border pixel of windows */
-static unsigned int snap      = 32;       /* snap pixel */
-static unsigned int gappih    = 20;       /* horiz inner gap between windows */
-static unsigned int gappiv    = 10;       /* vert inner gap between windows */
-static unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
-static unsigned int gappov    = 30;       /* vert outer gap between windows and screen edge */
-static int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
-static int showbar            = 1;        /* 0 means no bar */
-static int topbar             = 1;        /* 0 means bottom bar */
-static int vertpad            = 10;       /* vertical padding of bar */
-static int sidepad            = 10;       /* horizontal padding of bar */
-static int user_bh            = 23;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
-static unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
-static unsigned int systrayspacing = 2;   /* systray spacing */
-static int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
-static int showsystray             = 1;   /* 0 means no systray */
-static char font[]            = "monospace:size=10";
-static char dmenufont[]       = "monospace:size=10";
-static char *fonts[]          = { font };
-static char normbgcolor[]     = "#222222";
-static char normbordercolor[] = "#444444";
-static char normfgcolor[]     = "#bbbbbb";
-static char selfgcolor[]      = "#eeeeee";
-static char selbordercolor[]  = "#005577";
-static char selbgcolor[]      = "#005577";
-static char normmarkcolor[]   = "#775500";	/*border color for marked client*/
-static char selmarkcolor[]    = "#775577";	/*border color for marked client on focus*/
-static const unsigned int baralpha    = 0xd0;
-static const unsigned int borderalpha = OPAQUE;
-static char *colors[][3]      = {
+static char *fonts[]                    = { font };
+static const unsigned int gappih        = 10;       /* horiz inner gap between windows */
+static const unsigned int gappiv        = 10;       /* vert inner gap between windows */
+static const unsigned int gappoh        = 10;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov        = 10;       /* vert outer gap between windows and screen edge */
+static const int smartgaps              = 0;        /* 1 means no outer gap when there is only one window */
+static const unsigned int baralpha      = 0xd0;
+static const unsigned int borderalpha   = OPAQUE;
+
+/* systray */
+static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
+static const unsigned int systrayspacing = 2;   /* systray spacing */
+static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
+static const int showsystray             = 1;   /* 0 means no systray */
+
+/* colors */
+static const char *colors[][3]           = {
        /*                   fg           bg           border   */
        [SchemeNorm]     = { normfgcolor, normbgcolor, normbordercolor },
        [SchemeSel]      = { selfgcolor,  selbgcolor,  selbordercolor  },
        [SchemeNormMark] = { normfgcolor, normbgcolor, normmarkcolor   },
        [SchemeSelMark]  = { selfgcolor,  selbgcolor,  selmarkcolor    },
 };
-static const unsigned int alphas[][3]      = {
+
+/* alphas */
+static const unsigned int alphas[][3]    = {
 	/*                   fg      bg        border     */
 	[SchemeNorm]     = { OPAQUE, baralpha, borderalpha },
 	[SchemeSel]      = { OPAQUE, baralpha, borderalpha },
 	[SchemeNormMark] = { OPAQUE, baralpha, borderalpha },
 	[SchemeSelMark]  = { OPAQUE, baralpha, borderalpha },
 };
-
-/* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-
-static char *tagsel[][2] = {
-	{ "#ffffff", "#ff0000" },
-	{ "#ffffff", "#ff7f00" },
-	{ "#000000", "#ffff00" },
-	{ "#000000", "#00ff00" },
-	{ "#ffffff", "#0000ff" },
-	{ "#ffffff", "#4b0082" },
-	{ "#ffffff", "#9400d3" },
-	{ "#000000", "#ffffff" },
-	{ "#ffffff", "#000000" },
-};
-
-static const unsigned int tagalpha[] = { OPAQUE, baralpha };
-
-static const Rule rules[] = {
-	/* xprop(1):
-	 *	WM_CLASS(STRING) = instance, class
-	 *	WM_NAME(STRING) = title
-	 */
-	/* class      instance    title       tags mask     isfloating   monitor    float x,y,w,h  floatborderpx isfakefullscreen*/
-//{ "Gimp",     NULL,       NULL,       0,            1,           -1,        50,50,500,500, 5,            0 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1,        50,50,500,500, 5,            0 },
-};
+static const unsigned int tagalpha[]     = { OPAQUE, baralpha };
 
 /* window swallowing */
 static const int swaldecay = 3;
 static const int swalretroactive = 1;
 static const char swalsymbol[] = "ﳺ";
 
-/* layout(s) */
-static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
-static int nmaster     = 1;    /* number of clients in master area */
-static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+/* focus */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
+/* tagging */
+static const char *tags[] = { tagsyms[0], tagsyms[1], tagsyms[2], tagsyms[3], tagsyms[4], tagsyms[5], tagsyms[6], tagsyms[7], tagsyms[8] };
+static const char *tagsel[][2] = {
+	{ tagcolors[0][0], tagcolors[0][1] },
+	{ tagcolors[1][0], tagcolors[1][1] },
+	{ tagcolors[2][0], tagcolors[2][1] },
+	{ tagcolors[3][0], tagcolors[3][1] },
+	{ tagcolors[4][0], tagcolors[4][1] },
+	{ tagcolors[5][0], tagcolors[5][1] },
+	{ tagcolors[6][0], tagcolors[6][1] },
+	{ tagcolors[7][0], tagcolors[7][1] },
+	{ tagcolors[8][0], tagcolors[8][1] },
+};
+
+/* layout(s) */
 #define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
 #include "vanitygaps.c"
-
-
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
@@ -116,11 +133,88 @@ static const Layout layouts[] = {
 	{ NULL,       NULL },
 };
 
+
+/*
+ * Xresources preferences to load at startup
+ */
+ResourcePref resources[] = {
+  //  fonts
+		{ "font",               STRING,  &font },
+		{ "dmenufont",          STRING,  &dmenufont },
+  //  colors
+		{ "normbgcolor",        STRING,  &normbgcolor },
+		{ "normbordercolor",    STRING,  &normbordercolor },
+		{ "normfgcolor",        STRING,  &normfgcolor },
+		{ "selbgcolor",         STRING,  &selbgcolor },
+		{ "selbordercolor",     STRING,  &selbordercolor },
+		{ "selfgcolor",         STRING,  &selfgcolor },
+		{ "normmarkcolor",      STRING,  &normmarkcolor },
+		{ "selmarkcolor",       STRING,  &selmarkcolor },
+  // tag colors
+		{ "tag1fg",             STRING,  &tagcolors[0][0] },
+		{ "tag1bg",             STRING,  &tagcolors[0][1] },
+		{ "tag2fg",             STRING,  &tagcolors[1][0] },
+		{ "tag2bg",             STRING,  &tagcolors[1][1] },
+		{ "tag3fg",             STRING,  &tagcolors[2][0] },
+		{ "tag3bg",             STRING,  &tagcolors[2][1] },
+		{ "tag4fg",             STRING,  &tagcolors[3][0] },
+		{ "tag4bg",             STRING,  &tagcolors[3][1] },
+		{ "tag5fg",             STRING,  &tagcolors[4][0] },
+		{ "tag5bg",             STRING,  &tagcolors[4][1] },
+		{ "tag6fg",             STRING,  &tagcolors[5][0] },
+		{ "tag6bg",             STRING,  &tagcolors[5][1] },
+		{ "tag7fg",             STRING,  &tagcolors[6][0] },
+		{ "tag7bg",             STRING,  &tagcolors[6][1] },
+		{ "tag8fg",             STRING,  &tagcolors[7][0] },
+		{ "tag8bg",             STRING,  &tagcolors[7][1] },
+		{ "tag9fg",             STRING,  &tagcolors[8][0] },
+		{ "tag9bg",             STRING,  &tagcolors[8][1] },
+  //  tag icon
+		{ "tag1sym",            STRING,  &tagsyms[0] },
+		{ "tag2sym",            STRING,  &tagsyms[1] },
+		{ "tag3sym",            STRING,  &tagsyms[2] },
+		{ "tag4sym",            STRING,  &tagsyms[3] },
+		{ "tag5sym",            STRING,  &tagsyms[4] },
+		{ "tag6sym",            STRING,  &tagsyms[5] },
+		{ "tag7sym",            STRING,  &tagsyms[6] },
+		{ "tag8sym",            STRING,  &tagsyms[7] },
+		{ "tag9sym",            STRING,  &tagsyms[8] },
+  //  misc
+		{ "borderpx",          	INTEGER, &borderpx },
+		{ "barheight",        	INTEGER, &user_bh },
+		{ "topbar",            	INTEGER, &topbar },
+		{ "showbar",          	INTEGER, &showbar },
+		{ "vertpad",          	INTEGER, &vertpad },
+		{ "sidepad",          	INTEGER, &sidepad },
+		{ "snap",          		  INTEGER, &snap },
+		{ "resizehints",       	INTEGER, &resizehints },
+		{ "nmaster",          	INTEGER, &nmaster },
+		{ "mfact",      	 	    FLOAT,   &mfact },
+};
+
+
+/*
+ * RULES
+ */
+static const Rule rules[] = {
+	/* xprop(1):
+	 *	WM_CLASS(STRING) = instance, class
+	 *	WM_NAME(STRING) = title
+	 */
+	/* class      instance    title       tags mask     isfloating   monitor    float x,y,w,h  floatborderpx isfakefullscreen*/
+//{ "Gimp",     NULL,       NULL,       0,            1,           -1,        50,50,500,500, 5,            0 },
+	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1,        50,50,500,500, 5,            0 },
+};
 static const MonitorRule monrules[] = {
 	/* monitor  tag  layout  mfact  nmaster  showbar  topbar */
 	//{  1,       -1,  2,      -1,    -1,      -1,      -1     }, // use a different layout for the second monitor
 	{  -1,      -1,  0,      -1,    -1,      -1,      -1     } // default (keep it last)
 };
+
+
+/*
+ * KEYBINDINGS
+ */
 
 /* key definitions */
 #define MODKEY Mod4Mask
@@ -145,29 +239,8 @@ static const StatusCmd statuscmds[] = {
 	{ "notify-send Mouse$BUTTON", 1 },
 };
 static const char *statuscmd[] = { "/bin/sh", "-c", NULL, NULL };
-
-/*
- * Xresources preferences to load at startup
- */
-ResourcePref resources[] = {
-		{ "font",               STRING,  &font },
-		{ "dmenufont",          STRING,  &dmenufont },
-		{ "normbgcolor",        STRING,  &normbgcolor },
-		{ "normbordercolor",    STRING,  &normbordercolor },
-		{ "normfgcolor",        STRING,  &normfgcolor },
-		{ "selbgcolor",         STRING,  &selbgcolor },
-		{ "selbordercolor",     STRING,  &selbordercolor },
-		{ "selfgcolor",         STRING,  &selfgcolor },
-		{ "borderpx",          	INTEGER, &borderpx },
-		{ "snap",          		  INTEGER, &snap },
-		{ "showbar",          	INTEGER, &showbar },
-		{ "topbar",            	INTEGER, &topbar },
-		{ "nmaster",          	INTEGER, &nmaster },
-		{ "resizehints",       	INTEGER, &resizehints },
-		{ "mfact",      	 	    FLOAT,   &mfact },
-};
-
 #include "exitdwm.c"
+
 static Key keys[] = {
 	/* modifier                     chain key key        function        argument */
   // Layouts
@@ -280,7 +353,11 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
-/* signal definitions */
+
+/*
+ * SIGNALS
+ */
+
 /* signum must be greater than 0 */
 /* trigger signals using `xsetroot -name "fsignal:<signum>"` */
 static Signal signals[] = {
