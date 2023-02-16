@@ -119,6 +119,7 @@ static const char *tagsel[][2] = {
 /* layout(s) */
 #define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
 #include "vanitygaps.c"
+#include "exitdwm.c"
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
@@ -247,11 +248,6 @@ static const char *volminup[]  = { "mcdmsc-volume", "up", "1", NULL };
 static const char *voldown[]  = { "mcdmsc-volume", "down", "5", NULL };
 static const char *volmindown[]  = { "mcdmsc-volume", "down", "1", NULL };
 
-static const char *lumup[]  = { "brightness.sh", "up", "5", NULL };
-static const char *luminup[]  = { "brightness.sh", "up", "1", NULL };
-static const char *lumdown[]  = { "brightness.sh", "down", "5", NULL };
-static const char *lumindown[]  = { "brightness.sh", "down", "1", NULL };
-
 /* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
 static const StatusCmd statuscmds[] = {
 	{ "notify-send Mouse$BUTTON", 1 },
@@ -309,12 +305,6 @@ static Key keys[] = {
 	{ MODKEY|ControlMask,            XK_Down,   spawn,          {.v = voldown } },
 	{ MODKEY|ShiftMask|ControlMask,  XK_Up,     spawn,          {.v = volminup } },
 	{ MODKEY|ShiftMask|ControlMask,  XK_Down,   spawn,          {.v = volmindown } },
-  // Brightness
-	{ MODKEY|Mod1Mask|ControlMask,   XK_Up,     spawn,          {.v = lumup } },
-	{ MODKEY|Mod1Mask|ControlMask,   XK_Down,   spawn,          {.v = lumdown } },
-	{ MODKEY|Mod1Mask|ShiftMask|ControlMask,XK_Up,    spawn,    {.v = luminup } },
-	{ MODKEY|Mod1Mask|ShiftMask|ControlMask,XK_Down,  spawn,    {.v = lumindown } },
-
 
   // Focus
 	{ MODKEY,                        XK_comma,  focusmon,       {.i = -1 } },
@@ -366,6 +356,7 @@ static Key keys[] = {
 	{ MODKEY|ControlMask|ShiftMask,  XK_c,      scratchpad_remove,{0} },
 
   // Quit
+	{ MODKEY,                        XK_q,      exitdwm,        {0} },
 	{ MODKEY,                        XK_p,      spawn,          {.v = powermenu } },
 	{ MODKEY|ShiftMask,              XK_q,      quit,           {1} }, 
 	{ MODKEY|ControlMask|ShiftMask,  XK_q,      quit,           {0} },
