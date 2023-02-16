@@ -5,6 +5,15 @@
 #define ICONSIZE (bh - 4)   /* icon size */
 #define ICONSPACING 5 /* space between icon and title */
 
+/* alt-tab configuration */
+static const unsigned int tabModKey 		= 0x40;	/* if this key is hold the alt-tab functionality stays acitve. This key must be the same as key that is used to active functin altTabStart `*/
+static const unsigned int tabCycleKey 	= 0x17;	/* if this key is hit the alt-tab program moves one position forward in clients stack. This key must be the same as key that is used to active functin altTabStart */
+static const unsigned int tabReverseKey	= 0x32;	/* reverses alttab cycle */
+static const unsigned int tabPosY 			= 1;	/* tab position on Y axis, 0 = bottom, 1 = center, 2 = top */
+static const unsigned int tabPosX 			= 1;	/* tab position on X axis, 0 = left, 1 = center, 2 = right */
+static const unsigned int maxWTab 			= 600;	/* tab menu width */
+static const unsigned int maxHTab 			= 200;	/* tab menu height */
+
 /* appearance */
 static unsigned int borderpx  = 5;        /* border pixel of windows */
 static unsigned int snap      = 32;       /* snap pixel */
@@ -209,11 +218,13 @@ static Key keys[] = {
   // Windows
 	{ MODKEY,                       -1,       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       -1,       XK_k,      focusstack,     {.i = -1 } },
+	{ Mod1Mask,                     -1,       XK_Tab,    altTabStart,    {.i = +1 } },
+	{ Mod1Mask|ShiftMask,           -1,       XK_Tab,    altTabStart,    {.i = -1 } },
 	{ MODKEY|ShiftMask,             -1,       XK_c,      killclient,     {0} },
 	{ MODKEY,                       -1,       XK_Return, zoom,           {0} },
 
   // Tags
-	{ MODKEY,                       -1,       XK_Tab,    view,           {0} },
+	{ MODKEY,                       -1,       XK_q,      view,           {0} },
 	{ MODKEY,                       -1,       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY,                       -1,       XK_o,      winview,        {0} },
 	{ MODKEY|ShiftMask,             -1,       XK_0,      tag,            {.ui = ~0 } },

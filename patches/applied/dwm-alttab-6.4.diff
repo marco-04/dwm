@@ -1,15 +1,16 @@
-From ec9fcfe019623ec6aff6476b6838eb4863098cf0 Mon Sep 17 00:00:00 2001
+From 8b1d33db9cbc03bf12df398bb14e62389efc70a3 Mon Sep 17 00:00:00 2001
 From: ViliamKovac1223 <viliamkovac1223@gmail.com>
-Date: Sat, 9 Jul 2022 02:58:18 +0200
+Date: Sun, 9 Oct 2022 16:29:28 -0400
 Subject: [PATCH] add alt-tab functionality
 
+Co-authored-by: Daniel Gerblick <daniel.gerblick@gmail.com>
 ---
  config.def.h |  11 ++-
  dwm.c        | 218 +++++++++++++++++++++++++++++++++++++++++++++++++++
  2 files changed, 228 insertions(+), 1 deletion(-)
 
 diff --git a/config.def.h b/config.def.h
-index a2ac963..3760870 100644
+index 061ad66..7a9e3b1 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,5 +1,13 @@
@@ -26,7 +27,7 @@ index a2ac963..3760870 100644
  /* appearance */
  static const unsigned int borderpx  = 1;        /* border pixel of windows */
  static const unsigned int snap      = 32;       /* snap pixel */
-@@ -72,7 +80,7 @@ static Key keys[] = {
+@@ -71,7 +79,7 @@ static const Key keys[] = {
  	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
  	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
  	{ MODKEY,                       XK_Return, zoom,           {0} },
@@ -35,7 +36,7 @@ index a2ac963..3760870 100644
  	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
  	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
  	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-@@ -85,6 +93,7 @@ static Key keys[] = {
+@@ -84,6 +92,7 @@ static const Key keys[] = {
  	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
  	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
  	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
@@ -44,7 +45,7 @@ index a2ac963..3760870 100644
  	TAGKEYS(                        XK_2,                      1)
  	TAGKEYS(                        XK_3,                      2)
 diff --git a/dwm.c b/dwm.c
-index 5646a5c..90edf9b 100644
+index e5efb6a..f606311 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -40,6 +40,7 @@
@@ -104,7 +105,7 @@ index 5646a5c..90edf9b 100644
  	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
  	return m;
  }
-@@ -1659,6 +1672,211 @@ spawn(const Arg *arg)
+@@ -1648,6 +1661,211 @@ spawn(const Arg *arg)
  	}
  }
  
@@ -116,7 +117,7 @@ index 5646a5c..90edf9b 100644
 +		selmon->altTabN++;
 +		if (selmon->altTabN >= selmon->nTabs)
 +			selmon->altTabN = 0; /* reset altTabN */
-+		
++
 +		focus(selmon->altsnext[selmon->altTabN]);
 +		restack(selmon);
 +	}
@@ -132,7 +133,7 @@ index 5646a5c..90edf9b 100644
 +	if (selmon->isAlt == 0)
 +		return;
 +
-+	/* 
++	/*
 +	* move all clients between 1st and choosen position,
 +	* one down in stack and put choosen client to the first position 
 +	* so they remain in right order for the next time that alt-tab is used
@@ -187,21 +188,21 @@ index 5646a5c..90edf9b 100644
 +		selmon->maxHTab = maxHTab;
 +
 +		/* decide position of tabwin */
-+		int posX = 0;
-+		int posY = 0;
++		int posX = selmon->mx;
++		int posY = selmon->my;
 +		if (tabPosX == 0)
-+			posX = 0;
++			posX += 0;
 +		if (tabPosX == 1)
-+			posX = (selmon->mw / 2) - (maxWTab / 2);
++			posX += (selmon->mw / 2) - (maxWTab / 2);
 +		if (tabPosX == 2)
-+			posX = selmon->mw - maxWTab;
++			posX += selmon->mw - maxWTab;
 +
 +		if (tabPosY == 0)
-+			posY = selmon->mh - maxHTab;
++			posY += selmon->mh - maxHTab;
 +		if (tabPosY == 1)
-+			posY = (selmon->mh / 2) - (maxHTab / 2);
++			posY += (selmon->mh / 2) - (maxHTab / 2);
 +		if (tabPosY == 2)
-+			posY = 0;
++			posY += 0;
 +
 +		h = selmon->maxHTab;
 +		/* XCreateWindow(display, parent, x, y, width, height, border_width, depth, class, visual, valuemask, attributes); just reference */
@@ -246,8 +247,8 @@ index 5646a5c..90edf9b 100644
 +		selmon->isAlt = 1;
 +		selmon->altTabN = 0;
 +
-+  		Client *c;
-+  		Monitor *m = selmon;
++		Client *c;
++		Monitor *m = selmon;
 +
 +		m->nTabs = 0;
 +		for(c = m->clients; c; c = c->next) { /* count clients */
@@ -300,7 +301,7 @@ index 5646a5c..90edf9b 100644
 +					}
 +				}
 +
-+				c = selmon->sel; 
++				c = selmon->sel;
 +				altTabEnd(); /* end the alt-tab functionality */
 +				/* XUngrabKeyboard(display, time); just a reference */
 +				XUngrabKeyboard(dpy, CurrentTime); /* stop taking all input from keyboard */
@@ -317,5 +318,5 @@ index 5646a5c..90edf9b 100644
  tag(const Arg *arg)
  {
 -- 
-2.35.1
+2.37.3
 
