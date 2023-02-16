@@ -40,17 +40,23 @@ static char normfgcolor[]     = "#bbbbbb";
 static char selfgcolor[]      = "#eeeeee";
 static char selbordercolor[]  = "#005577";
 static char selbgcolor[]      = "#005577";
+static char normmarkcolor[]   = "#775500";	/*border color for marked client*/
+static char selmarkcolor[]    = "#775577";	/*border color for marked client on focus*/
 static const unsigned int baralpha    = 0xd0;
 static const unsigned int borderalpha = OPAQUE;
 static char *colors[][3]      = {
-       /*               fg           bg           border   */
-       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+       /*                   fg           bg           border   */
+       [SchemeNorm]     = { normfgcolor, normbgcolor, normbordercolor },
+       [SchemeSel]      = { selfgcolor,  selbgcolor,  selbordercolor  },
+       [SchemeNormMark] = { normfgcolor, normbgcolor, normmarkcolor   },
+       [SchemeSelMark]  = { selfgcolor,  selbgcolor,  selmarkcolor    },
 };
 static const unsigned int alphas[][3]      = {
-	/*               fg      bg        border     */
-	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
-	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
+	/*                   fg      bg        border     */
+	[SchemeNorm]     = { OPAQUE, baralpha, borderalpha },
+	[SchemeSel]      = { OPAQUE, baralpha, borderalpha },
+	[SchemeNormMark] = { OPAQUE, baralpha, borderalpha },
+	[SchemeSelMark]  = { OPAQUE, baralpha, borderalpha },
 };
 
 /* tagging */
@@ -161,7 +167,6 @@ ResourcePref resources[] = {
 		{ "mfact",      	 	    FLOAT,   &mfact },
 };
 
-#include "focusurgent.c"
 #include "exitdwm.c"
 static Key keys[] = {
 	/* modifier                     chain key key        function        argument */
@@ -213,7 +218,9 @@ static Key keys[] = {
 	{ MODKEY,                       -1,       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             -1,       XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             -1,       XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY,                       -1,       XK_u,      focusurgent,    {0} },
+  { MODKEY|ShiftMask,             -1,       XK_m,      togglemark,     {0} },
+  { MODKEY|ShiftMask,             -1,       XK_o,      swapfocus,      {0} },
+  { MODKEY,                       -1,       XK_u,      swapclient,     {0} },
 
   // Windows
 	{ MODKEY,                       -1,       XK_j,      focusstack,     {.i = +1 } },

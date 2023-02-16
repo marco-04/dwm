@@ -84,7 +84,7 @@
 /* enums */
 enum { Manager, Xembed, XembedInfo, XLast }; /* Xembed atoms */
 enum { CurNormal, CurResize, CurMove, CurSwal, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeNormMark, SchemeSelMark }; /* color schemes */
 enum { NetSupported, NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayVisual,
 	   NetWMName, NetWMIcon, NetWMState, NetWMFullscreen, NetActiveWindow, NetWMWindowType, NetWMWindowTypeDock,
 	   NetSystemTrayOrientationHorz, NetWMWindowTypeDialog, NetClientList, NetWMCheck, NetLast }; /* EWMH atoms */
@@ -333,6 +333,7 @@ static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
+static void setmark(Client *c);
 static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(void);
@@ -342,6 +343,8 @@ static void sigchld(int unused);
 static void sighup(int unused);
 static void sigterm(int unused);
 static void spawn(const Arg *arg);
+static void swapclient(const Arg *arg);
+static void swapfocus(const Arg *arg);
 static void swal(Client *swer, Client *swee, int manage);
 static void swalreg(Client *c, const char* class, const char* inst, const char* title);
 static void swaldecayby(int decayby);
@@ -359,6 +362,7 @@ static void tagtonext(const Arg *arg);
 static void tagtoprev(const Arg *arg);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglemark(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void freeicon(Client *c);
@@ -453,6 +457,7 @@ static Drw *drw;
 static Monitor *mons, *selmon;
 static Swallow *swallows;
 static Window root, wmcheckwin;
+static Client *mark;
 static KeySym keychain = -1;
 
 static Systray *systray = NULL;
@@ -1458,7 +1463,10 @@ focus(Client *c)
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, 1);
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
+		if (c == mark)
+			XSetWindowBorder(dpy, c->win, scheme[SchemeSelMark][ColBorder].pixel);
+		else
+			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
 		setfocus(c);
 	} else {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
@@ -1888,7 +1896,10 @@ manage(Window w, XWindowAttributes *wa)
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
-	XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
+	if (c == mark)
+		XSetWindowBorder(dpy, w, scheme[SchemeNormMark][ColBorder].pixel);
+	else
+		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
 	configure(c); /* propagates border_width, if size doesn't change */
 	updatewindowtype(c);
 	updatesizehints(c);
@@ -2824,6 +2835,23 @@ setcfact(const Arg *arg) {
 	arrange(selmon);
 }
 
+void
+setmark(Client *c)
+{
+	if (c == mark)
+		return;
+	if (mark) {
+		XSetWindowBorder(dpy, mark->win, scheme[mark == selmon->sel
+				? SchemeSel : SchemeNorm][ColBorder].pixel);
+		mark = 0;
+	}
+	if (c) {
+		XSetWindowBorder(dpy, c->win, scheme[c == selmon->sel
+				? SchemeSelMark : SchemeNormMark][ColBorder].pixel);
+		mark = c;
+	}
+}
+
 /* arg > 1.0 will set mfact absolutely */
 void
 setmfact(const Arg *arg)
@@ -3597,6 +3625,75 @@ altTabStart(const Arg *arg)
 }
 
 void
+swapclient(const Arg *arg)
+{
+	Client *s, *m, t;
+
+	if (!mark || !selmon->sel || mark == selmon->sel
+	    || !selmon->lt[selmon->sellt]->arrange)
+		return;
+	s = selmon->sel;
+	m = mark;
+	t = *s;
+	strcpy(s->name, m->name);
+	s->win = m->win;
+	s->x = m->x;
+	s->y = m->y;
+	s->w = m->w;
+	s->h = m->h;
+
+	m->win = t.win;
+	strcpy(m->name, t.name);
+	m->x = t.x;
+	m->y = t.y;
+	m->w = t.w;
+	m->h = t.h;
+
+	selmon->sel = m;
+	mark = s;
+	focus(s);
+	setmark(m);
+
+	arrange(s->mon);
+	if (s->mon != m->mon) {
+		arrange(m->mon);
+	}
+}
+
+void
+swapfocus(const Arg *arg)
+{
+	Client *t;
+
+	if (!selmon->sel || !mark || selmon->sel == mark)
+		return;
+	t = selmon->sel;
+	if (mark->mon != selmon) {
+		unfocus(selmon->sel, 0);
+		selmon = mark->mon;
+	}
+	if (ISVISIBLE(mark)) {
+		focus(mark);
+		restack(selmon);
+	} else {
+		selmon->seltags ^= 1;
+		selmon->tagset[selmon->seltags] = mark->tags;
+		focus(mark);
+		arrange(selmon);
+	}
+	setmark(t);
+}
+
+void
+togglemark(const Arg *arg)
+{
+	if (!selmon->sel)
+		return;
+	setmark(selmon->sel == mark ? 0 : selmon->sel);
+}
+
+
+void
 tag(const Arg *arg)
 {
 	if (selmon->sel && arg->ui & TAGMASK) {
@@ -3762,7 +3859,10 @@ unfocus(Client *c, int setfocus)
 	if (!c)
 		return;
 	grabbuttons(c, 0);
-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
+	if (c == mark)
+		XSetWindowBorder(dpy, c->win, scheme[SchemeNormMark][ColBorder].pixel);
+	else
+		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
 	if (setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -3777,6 +3877,9 @@ unmanage(Client *c, int destroyed)
 
 	/* Remove all swallow instances targeting client. */
 	swalunreg(c);
+
+	if (c == mark)
+		setmark(0);
 
 	detach(c);
 	detachstack(c);
