@@ -44,6 +44,7 @@ static char tagcolors[9][2][8] = {
 static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static int nmaster     = 1;    /* number of clients in master area */
 static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static int attachdirection = 4;    /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
 
 /* --constants-- */
 #define ICONSIZE (bh - 4)   /* icon size */
@@ -189,6 +190,7 @@ ResourcePref resources[] = {
 		{ "snap",          		  INTEGER, &snap },
 		{ "resizehints",       	INTEGER, &resizehints },
 		{ "nmaster",          	INTEGER, &nmaster },
+		{ "attachdirection",   	INTEGER, &attachdirection },
 		{ "mfact",      	 	    FLOAT,   &mfact },
 };
 
@@ -201,9 +203,9 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor    float x,y,w,h  floatborderpx isfakefullscreen*/
-//{ "Gimp",     NULL,       NULL,       0,            1,           -1,        50,50,500,500, 5,            0 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1,        50,50,500,500, 5,            0 },
+	/* class      instance    title       tags mask     isfloating   monitor    float x,y,w,h  isfakefullscreen*/
+//{ "Gimp",     NULL,       NULL,       0,            1,           -1,        50,50,500,500, 0 },
+	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1,        50,50,500,500, 0 },
 };
 static const MonitorRule monrules[] = {
 	/* monitor  tag  layout  mfact  nmaster  showbar  topbar */
@@ -301,8 +303,8 @@ static Key keys[] = {
 	{ MODKEY|ControlMask,            XK_f,      spawn,          {.v = filemanager } },
 	{ MODKEY|ControlMask,            XK_b,      spawn,          {.v = browser } },
   // Volume
-	{ MODKEY|XK_v,                   XK_p,      spawn,          {.v = volume } },
-	{ MODKEY|XK_v,                   XK_m,      spawn,          {.v = togglemute } },
+	{ MODKEY|ControlMask,            XK_p,      spawn,          {.v = volume } },
+	{ MODKEY|ControlMask,            XK_m,      spawn,          {.v = togglemute } },
 	{ MODKEY|ControlMask,            XK_Up,     spawn,          {.v = volup } },
 	{ MODKEY|ControlMask,            XK_Down,   spawn,          {.v = voldown } },
 	{ MODKEY|ShiftMask|ControlMask,  XK_Up,     spawn,          {.v = volminup } },
@@ -364,7 +366,7 @@ static Key keys[] = {
 	{ MODKEY|ControlMask|ShiftMask,  XK_c,      scratchpad_remove,{0} },
 
   // Quit
-	{ MODKEY,                        XK_q,      spawn,          {.v = powermenu } },
+	{ MODKEY,                        XK_p,      spawn,          {.v = powermenu } },
 	{ MODKEY|ShiftMask,              XK_q,      quit,           {1} }, 
 	{ MODKEY|ControlMask|ShiftMask,  XK_q,      quit,           {0} },
 };
