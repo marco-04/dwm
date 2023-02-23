@@ -2572,9 +2572,13 @@ rundmenu(const Arg* arg) {
   sprintf(dmy, "%d", dmenuy);
   sprintf(dmw, "%d", dmenuw-(dmenu_bw*2));
 
-  char *dmrun[] = {arg->v, "-x", dmx, "-y", dmy, "-z", dmw, NULL};
-
-  spawn(&((Arg) {.v = dmrun} ));
+  if (selmon->showbar) {
+    char *dmrun[] = {arg->v, "-x", dmx, "-y", dmy, "-z", dmw, NULL};
+    spawn(&((Arg) {.v = dmrun} ));
+  } else {
+    char *dmrun_hiddenbar[] = {arg->v, "-c", NULL};
+    spawn(&((Arg) {.v = dmrun_hiddenbar} ));
+  }
 }
 
 void
