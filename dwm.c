@@ -93,6 +93,7 @@ enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms *
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
 enum { ClientRegular = 1, ClientSwallowee, ClientSwallower }; /* client types */
+enum { DmNorm, DmSel, DmMid, DmNormH, DmSelH }; /* dmenu configuration */
 
 typedef union {
 	int i;
@@ -323,6 +324,7 @@ static void removesystrayicon(Client *i);
 static void resizerequest(XEvent *e);
 static void restack(Monitor *m);
 static void run(void);
+static void rundmenu(const Arg* arg);
 static void runautostart(void);
 static void scan(void);
 static void scratchpad_hide ();
@@ -412,13 +414,13 @@ static void keyrelease(XEvent *e);
 static void combotag(const Arg *arg);
 static void comboview(const Arg *arg);
 
-
 /* variables */
 static const char autostartblocksh[] = "autostart_blocking.sh";
 static const char autostartsh[] = "autostart.sh";
 static const char broken[] = "broken";
 static const char dwmdir[] = "dwm";
 static const char localshare[] = ".local/share";
+static int dmenux, dmenuy, dmenuw;
 static char stext[1024];
 static int statusw;
 static int statuscmdn;
@@ -1374,6 +1376,8 @@ drawbar(Monitor *m)
 		x = drw_text(drw, x, 0, w, bh, lrpad / 2, swalsymbol, 0);
 	}
 
+  dmenux = x;
+
 	if ((w = m->ww - tw - stw - x) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
@@ -1394,6 +1398,7 @@ drawbar(Monitor *m)
 			drw_rect(drw, x, 0, w - 2 * sp, bh, 1, 1);
 		}
 	}
+  dmenuw = w - 2 * sp;
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
 
@@ -2554,6 +2559,22 @@ run(void)
 	while (running && !XNextEvent(dpy, &ev))
 		if (handler[ev.type])
 			handler[ev.type](&ev); /* call handler */
+}
+
+void
+rundmenu(const Arg* arg) {
+  char dmx[7], dmy[7], dmw[7];
+
+  dmenuy = sp;
+  *dmx = *dmy = *dmw = '\0';
+
+  sprintf(dmx, "%d", dmenux+(dmenu_bw*2));
+  sprintf(dmy, "%d", dmenuy);
+  sprintf(dmw, "%d", dmenuw-(dmenu_bw*2));
+
+  char *dmrun[] = {arg->v, "-x", dmx, "-y", dmy, "-z", dmw, NULL};
+
+  spawn(&((Arg) {.v = dmrun} ));
 }
 
 void

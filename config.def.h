@@ -15,6 +15,7 @@ static int topbar             = 1;        /* 0 means bottom bar */
 static int vertpad            = 10;       /* vertical padding of bar */
 static int sidepad            = 10;       /* horizontal padding of bar */
 static int user_bh            = 23;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static int dmenu_bw           = 5;
 static char font[]            = "monospace:size=10";
 static char dmenufont[]       = "monospace:size=10";
 static char normbgcolor[]     = "#222222";
@@ -293,8 +294,8 @@ static Key keys[] = {
 	{ MODKEY,                        XK_b,      togglebar,      {0} },
 
   // Launchers
-	{ MODKEY,                        XK_space,  spawn,          {.v = applaunchercmd } },
-	{ MODKEY|ControlMask,            XK_space,  spawn,          {.v = dmenucmd } },
+	{ MODKEY,                        XK_space,  rundmenu,       {.v = "mcdmsc-applauncher" } },
+	{ MODKEY|ControlMask,            XK_space,  rundmenu,       {.v = "dwm-dmenu_run" } },
 	{ MODKEY|ControlMask,            XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ControlMask,            XK_f,      spawn,          {.v = filemanager } },
 	{ MODKEY|ControlMask,            XK_b,      spawn,          {.v = browser } },
