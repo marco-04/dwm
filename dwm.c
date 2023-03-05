@@ -2570,7 +2570,7 @@ rundmenu(const Arg* arg) {
 
   sprintf(dmx, "%d", dmenux+(dmenu_bw*2));
   sprintf(dmy, "%d", dmenuy);
-  sprintf(dmw, "%d", dmenuw-(dmenu_bw*2));
+  sprintf(dmw, "%d", dmenuw);
 
   if (selmon->showbar) {
     char *dmrun[] = {arg->v, "-x", dmx, "-y", dmy, "-z", dmw, NULL};
